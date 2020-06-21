@@ -208,10 +208,10 @@ function! s:setDictionaries()
         \ 'cp'       : '',
         \ 'c'        : '',
         \ 'cs'       : '',
-        \ 'h'        : '',
-        \ 'hh'       : '',
-        \ 'hpp'      : '',
-        \ 'hxx'      : '',
+        \ 'h'        : '',
+        \ 'hh'       : '',
+        \ 'hpp'      : '',
+        \ 'hxx'      : '',
         \ 'hs'       : '',
         \ 'lhs'      : '',
         \ 'lua'      : '',
@@ -272,7 +272,13 @@ function! s:setDictionaries()
         \ 'xcplayground' : '',
         \ 'tex'      : 'ﭨ',
         \ 'r'        : 'ﳒ',
-        \ 'rproj'    : '鉶'
+        \ 'rproj'    : '鉶',
+		\ 'frag'     : '',
+		\ 'comp'     : '',
+		\ 'vert'     : '',
+		\ 'geom'     : '',
+		\ 'tesc'     : '',
+		\ 'tese'     : ''
         \}
 
   let s:file_node_exact_matches = {
