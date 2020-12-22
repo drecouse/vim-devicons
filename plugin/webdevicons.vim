@@ -66,12 +66,14 @@ call s:set('g:WebDevIconsUnicodeDecorateFolderNodes', 1)
 call s:set('g:DevIconsEnableFoldersOpenClose', 0)
 call s:set('g:DevIconsEnableFolderPatternMatching', 1)
 call s:set('g:DevIconsEnableFolderExtensionPatternMatching', 0)
+call s:set('g:DevIconsEnableDistro', 1)
 call s:set('g:WebDevIconsUnicodeDecorateFolderNodesExactMatches', 1)
 call s:set('g:WebDevIconsUnicodeGlyphDoubleWidth', 1)
 call s:set('g:WebDevIconsNerdTreeBeforeGlyphPadding', ' ')
 call s:set('g:WebDevIconsNerdTreeAfterGlyphPadding', ' ')
 call s:set('g:WebDevIconsNerdTreeGitPluginForceVAlign', 1)
-call s:set('g:NERDTreeUpdateOnCursorHold', 1)
+call s:set('g:NERDTreeUpdateOnCursorHold', 1) " Obsolete: For backward compatibility
+call s:set('g:NERDTreeGitStatusUpdateOnCursorHold', 1)
 call s:set('g:WebDevIconsTabAirLineBeforeGlyphPadding', ' ')
 call s:set('g:WebDevIconsTabAirLineAfterGlyphPadding', '')
 
@@ -96,10 +98,12 @@ function s:getDistro()
     return s:distro
   endif
 
-  if executable('lsb_release')
+  if g:DevIconsEnableDistro && executable('lsb_release')
     let s:lsb = system('lsb_release -i')
     if s:lsb =~# 'Arch'
       let s:distro = ''
+    elseif s:lsb =~# 'Gentoo'
+      let s:distro = ''
     elseif s:lsb =~# 'Ubuntu'
       let s:distro = ''
     elseif s:lsb =~# 'Cent'
@@ -214,6 +218,7 @@ function! s:setDictionaries()
         \ 'hxx'      : '',
         \ 'hs'       : '',
         \ 'lhs'      : '',
+        \ 'nix'      : '',
         \ 'lua'      : '',
         \ 'java'     : '',
         \ 'sh'       : '',
@@ -295,6 +300,7 @@ function! s:setDictionaries()
         \ '.ds_store'                        : '',
         \ '.gitconfig'                       : '',
         \ '.gitignore'                       : '',
+        \ '.gitattributes'                   : '',
         \ '.gitlab-ci.yml'                   : '',
         \ '.bashrc'                          : '',
         \ '.zshrc'                           : '',
@@ -372,6 +378,10 @@ function! s:setSyntax()
       au!
       autocmd FileType nerdtree syntax match hideBracketsInNerdTree "\]" contained conceal containedin=NERDTreeFlags
       autocmd FileType nerdtree syntax match hideBracketsInNerdTree "\[" contained conceal containedin=NERDTreeFlags
+      autocmd FileType nerdtree syntax match hideBracketsInNerdTree "\]" contained conceal containedin=NERDTreeLinkFile
+      autocmd FileType nerdtree syntax match hideBracketsInNerdTree "\]" contained conceal containedin=NERDTreeLinkDir
+      autocmd FileType nerdtree syntax match hideBracketsInNerdTree "\[" contained conceal containedin=NERDTreeLinkFile
+      autocmd FileType nerdtree syntax match hideBracketsInNerdTree "\[" contained conceal containedin=NERDTreeLinkDir
       autocmd FileType nerdtree setlocal conceallevel=3
       autocmd FileType nerdtree setlocal concealcursor=nvic
     augroup END
@@ -391,7 +401,7 @@ endfunction
 " scope: local
 " stole solution/idea from nerdtree-git-plugin :)
 function! s:CursorHoldUpdate()
-  if g:NERDTreeUpdateOnCursorHold != 1
+  if g:NERDTreeUpdateOnCursorHold != 1 || g:NERDTreeGitStatusUpdateOnCursorHold != 1
     return
   endif
 
@@ -557,11 +567,7 @@ function! WebDevIconsGetFileFormatSymbol(...)
   if &fileformat ==? 'dos'
     let fileformat = ''
   elseif &fileformat ==? 'unix'
-    if s:isDarwin()
-      let fileformat = ''
-    else
-      let fileformat = s:getDistro()
-    endif
+    let fileformat = s:isDarwin() ? '' : s:getDistro()
   elseif &fileformat ==? 'mac'
     let fileformat = ''
   endif
@@ -591,11 +597,7 @@ endif
 
 if g:webdevicons_enable == 1 && g:webdevicons_enable_airline_tabline
   " Store original formatter.
-  if exists('g:airline#extensions#tabline#formatter')
-    let g:_webdevicons_airline_orig_formatter = g:airline#extensions#tabline#formatter
-  else
-    let g:_webdevicons_airline_orig_formatter = 'default'
-  endif
+  let g:_webdevicons_airline_orig_formatter = get(g:, 'airline#extensions#tabline#formatter', 'default')
   let g:airline#extensions#tabline#formatter = 'webdevicons'
 endif
 
