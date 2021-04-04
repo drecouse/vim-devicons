@@ -304,6 +304,8 @@ function! s:setDictionaries()
         \ '.gitlab-ci.yml'                   : '',
         \ '.bashrc'                          : '',
         \ '.zshrc'                           : '',
+        \ '.zshenv'                          : '',
+        \ '.zprofile'                        : '',
         \ '.vimrc'                           : '',
         \ '.gvimrc'                          : '',
         \ '_vimrc'                           : '',
